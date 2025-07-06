@@ -86,4 +86,12 @@ npm run dev
 
 - ไฟล์ `pages/serviceAccountKey.json` จะไม่ถูก commit ไปยัง Git repository เพื่อความปลอดภัย
 - ใช้ไฟล์ `.example` เป็นเทมเพลตสำหรับการตั้งค่า
-- ข้อมูลการเชื่อมต่อฐานข้อมูลและ Firebase จะถูกอ่านจาก environment variables 
+- ข้อมูลการเชื่อมต่อฐานข้อมูลและ Firebase จะถูกอ่านจาก environment variables
+- ไฟล์ `scripts/firebase-realtime.js` เป็น script สำหรับการทดสอบ Firebase Realtime Database (ไม่ใช่หน้าเว็บ)
+
+## การรัน Scripts
+
+```bash
+# รัน Firebase Realtime Database script
+node scripts/firebase-realtime.js
+``` 
