@@ -1,0 +1,62 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+export default function VerifyOTP() {
+  const router = useRouter();
+  const { email } = router.query;
+  const [otp, setOtp] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await res.json();
+      setMessage(data.message);
+      if (res.ok) {
+        setTimeout(() => router.push({ pathname: '/reset-password', query: { email } }), 1000);
+      }
+    } catch (err) {
+      setMessage('เกิดข้อผิดพลาด');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ maxWidth: 380, width: '100%', background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px rgba(80,120,255,0.10)', padding: '2.5rem 2rem', margin: 16 }}>
+        <h2 style={{ textAlign: 'center', color: '#3b5bfd', marginBottom: 24, fontWeight: 700, letterSpacing: 1 }}>ยืนยันรหัส OTP</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="otp" style={{ fontWeight: 500, color: '#222' }}>รหัส OTP</label>
+          <input
+            id="otp"
+            type="text"
+            value={otp}
+            onChange={e => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+            required
+            maxLength={6}
+            style={{ width: '100%', margin: '10px 0 18px 0', padding: '12px', background: '#f3f6fd', border: '1px solid #e0e6f7', borderRadius: 8, fontSize: '1.2rem', letterSpacing: 8, textAlign: 'center', color: '#23243a', outline: 'none', transition: 'border 0.2s', boxSizing: 'border-box' }}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoFocus
+          />
+          <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px 0', background: '#3b5bfd', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 17, boxShadow: '0 2px 8px #3b5bfd22', cursor: loading ? 'not-allowed' : 'pointer', marginBottom: 8, transition: 'background 0.2s' }}>
+            {loading ? 'กำลังตรวจสอบ...' : 'ยืนยัน OTP'}
+          </button>
+        </form>
+        {message && (
+          <div style={{ marginTop: 18, textAlign: 'center', color: message.includes('OTP ไม่ถูกต้อง') || message.includes('ผิดพลาด') || message.includes('หมดอายุ') ? '#e11d48' : message.includes('ถูกต้อง') ? '#16a34a' : '#23243a', fontWeight: 500 }}>
+            {message}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+} 
