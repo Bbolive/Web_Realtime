@@ -125,8 +125,8 @@ pages/serviceAccountKey.json
 *.json.key
 serviceAccountKey.json
 
-# Database credentials
-lib/db.js
+# Database credentials (now using environment variables)
+# lib/db.js
 
 # IDE files
 *.swp
