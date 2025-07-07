@@ -1,10 +1,17 @@
 import { useState } from 'react';
 
+/**
+ * Page for fixing and checking database tables.
+ * @returns {JSX.Element}
+ */
 export default function FixDatabase() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
 
+  /**
+   * Call API to fix user table.
+   */
   const fixUserTable = async () => {
     setLoading(true);
     setError(null);
@@ -18,6 +25,9 @@ export default function FixDatabase() {
     setLoading(false);
   };
 
+  /**
+   * Call API to update existing users.
+   */
   const updateExistingUsers = async () => {
     setLoading(true);
     setError(null);
@@ -31,6 +41,9 @@ export default function FixDatabase() {
     setLoading(false);
   };
 
+  /**
+   * Call API to check tables.
+   */
   const checkTables = async () => {
     setLoading(true);
     setError(null);
@@ -61,7 +74,7 @@ export default function FixDatabase() {
         backdropFilter: 'blur(8px)' 
       }}>
         <h1 style={{ textAlign: 'center', color: '#23235b', fontWeight: 800, fontSize: '2rem', marginBottom: '1rem' }}>
-          🔧 แก้ไขปัญหาฐานข้อมูล
+          🛠 แก้ไขปัญหาฐานข้อมูล
         </h1>
         <p style={{ textAlign: 'center', color: '#7f8ff4', marginBottom: '2rem' }}>
           แก้ไขปัญหาโครงสร้างตารางและข้อมูลที่ไม่ตรงกับระบบ login

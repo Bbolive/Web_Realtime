@@ -3,6 +3,10 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styles from '../styles/Login.module.css';
 
+/**
+ * Login page for user authentication.
+ * @returns {JSX.Element}
+ */
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -10,6 +14,10 @@ export default function LoginPage() {
   const [message, setMessage] = useState('');
   const router = useRouter();
 
+  /**
+   * Handle login form submission.
+   * @param {React.FormEvent} e
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch('/api/login', {
@@ -41,20 +49,20 @@ export default function LoginPage() {
             <input
               type="text"
               className={styles.input}
-              placeholder="ใส่ชื่อผู้ใช้"
+              placeholder="ใส่ชื่อผู้ใช้งาน"
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
           <div className={styles.inputGroup}>
             <span className={styles.inputIcon}>🔒</span>
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               className={styles.input}
               placeholder="ใส่รหัสผ่าน"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             <button
@@ -77,7 +85,7 @@ export default function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: '28px',
-                height: '28px'
+                height: '28px',
               }}
               onMouseEnter={(e) => {
                 e.target.style.background = '#f0f4ff';
@@ -104,17 +112,37 @@ export default function LoginPage() {
               )}
             </button>
           </div>
-          <button type="submit" className={styles.loginBtn}>เข้าสู่ระบบ</button>
+          <button type="submit" className={styles.loginBtn}>
+            เข้าสู่ระบบ
+          </button>
         </form>
         <p className={styles.message}>{message}</p>
         <Link href="/forgot-password" legacyBehavior>
-          <a style={{ display: 'block', textAlign: 'center', color: '#7b8cff', margin: '1rem 0 0.5rem 0', textDecoration: 'underline', fontWeight: 500 }}>
+          <a
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              color: '#7b8cff',
+              margin: '1rem 0 0.5rem 0',
+              textDecoration: 'underline',
+              fontWeight: 500,
+            }}
+          >
             ลืมรหัสผ่าน?
           </a>
         </Link>
         <Link href="/request-access" legacyBehavior>
-          <a style={{ display: 'block', textAlign: 'center', color: '#7b8cff', fontWeight: 600, margin: '1.5rem 0 0.5rem 0', textDecoration: 'none' }}>
-            <span style={{fontSize: '1.1em'}}>➕</span> ขอสิทธิ์เข้าถึง
+          <a
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              color: '#7b8cff',
+              fontWeight: 600,
+              margin: '1.5rem 0 0.5rem 0',
+              textDecoration: 'none',
+            }}
+          >
+            <span style={{ fontSize: '1.1em' }}>➕</span> ขอสิทธิ์เข้าถึง
           </a>
         </Link>
       </div>

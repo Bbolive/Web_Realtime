@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/Maintenance.module.css';
 
+/**
+ * Maintenance management page for listing, adding, editing, and deleting maintenance records.
+ * @returns {JSX.Element}
+ */
 export default function MaintenancePage() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,13 +21,17 @@ export default function MaintenancePage() {
     completed_date: '',
     cost: '',
     technician: '',
-    note: ''
+    note: '',
   });
 
   useEffect(() => {
     fetchRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Fetch all maintenance records from the API.
+   */
   const fetchRecords = async () => {
     try {
       const response = await fetch('/api/maintenance');
@@ -37,6 +45,9 @@ export default function MaintenancePage() {
     }
   };
 
+  /**
+   * Open modal for adding a new maintenance record.
+   */
   const handleAdd = () => {
     setEditingRecord(null);
     setFormData({
@@ -48,11 +59,15 @@ export default function MaintenancePage() {
       completed_date: '',
       cost: '',
       technician: '',
-      note: ''
+      note: '',
     });
     setShowModal(true);
   };
 
+  /**
+   * Open modal for editing an existing maintenance record.
+   * @param {object} record
+   */
   const handleEdit = (record) => {
     setEditingRecord(record);
     setFormData({
@@ -64,16 +79,24 @@ export default function MaintenancePage() {
       completed_date: record.completed_date ? record.completed_date.slice(0, 10) : '',
       cost: record.cost || '',
       technician: record.technician || '',
-      note: record.note || ''
+      note: record.note || '',
     });
     setShowModal(true);
   };
 
+  /**
+   * Open confirmation modal for deleting a maintenance record.
+   * @param {object} record
+   */
   const handleDelete = (record) => {
     setDeletingRecord(record);
     setShowConfirmModal(true);
   };
 
+  /**
+   * Submit form for adding or editing a maintenance record.
+   * @param {React.FormEvent} e
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -95,6 +118,9 @@ export default function MaintenancePage() {
     }
   };
 
+  /**
+   * Confirm and delete a maintenance record.
+   */
   const confirmDelete = async () => {
     try {
       const response = await fetch(`/api/maintenance/${deletingRecord.id}`, {
@@ -110,6 +136,11 @@ export default function MaintenancePage() {
     }
   };
 
+  /**
+   * Get CSS class for maintenance status.
+   * @param {string} status
+   * @returns {string}
+   */
   const getStatusClass = (status) => {
     const s = (status || '').toLowerCase();
     if (s.includes('pending')) return styles.statusPending;
@@ -119,6 +150,11 @@ export default function MaintenancePage() {
     return '';
   };
 
+  /**
+   * Format date string to Thai locale.
+   * @param {string} dateString
+   * @returns {string}
+   */
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
@@ -127,7 +163,7 @@ export default function MaintenancePage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -154,7 +190,7 @@ export default function MaintenancePage() {
         </div>
       ) : (
         <div className={styles.maintenanceGrid}>
-          {records.map(item => (
+          {records.map((item) => (
             <div key={item.id} className={styles.maintenanceCard}>
               <div className={styles.maintenanceHeader}>
                 <h3 className={styles.maintenanceName}>ซ่อมบำรุง #{item.id}</h3>
@@ -253,7 +289,7 @@ export default function MaintenancePage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.vehicles_id}
-                  onChange={e => setFormData({ ...formData, vehicles_id: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, vehicles_id: e.target.value })}
                   required
                   placeholder="กรอกรหัสยานพาหนะ"
                 />
@@ -264,7 +300,7 @@ export default function MaintenancePage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.maintenance_type}
-                  onChange={e => setFormData({ ...formData, maintenance_type: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, maintenance_type: e.target.value })}
                   required
                   placeholder="กรอกประเภทซ่อมบำรุง"
                 />
@@ -275,7 +311,7 @@ export default function MaintenancePage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="กรอกรายละเอียด"
                 />
               </div>
@@ -284,7 +320,7 @@ export default function MaintenancePage() {
                 <select
                   className={styles.formSelect}
                   value={formData.status}
-                  onChange={e => setFormData({ ...formData, status: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
                   <option value="pending">รอดำเนินการ</option>
                   <option value="in progress">กำลังดำเนินการ</option>
@@ -298,7 +334,7 @@ export default function MaintenancePage() {
                   type="date"
                   className={styles.formInput}
                   value={formData.scheduled_date}
-                  onChange={e => setFormData({ ...formData, scheduled_date: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, scheduled_date: e.target.value })}
                 />
               </div>
               <div className={styles.formGroup}>
@@ -307,7 +343,7 @@ export default function MaintenancePage() {
                   type="date"
                   className={styles.formInput}
                   value={formData.completed_date}
-                  onChange={e => setFormData({ ...formData, completed_date: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, completed_date: e.target.value })}
                 />
               </div>
               <div className={styles.formGroup}>
@@ -316,7 +352,7 @@ export default function MaintenancePage() {
                   type="number"
                   className={styles.formInput}
                   value={formData.cost}
-                  onChange={e => setFormData({ ...formData, cost: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                   placeholder="กรอกค่าใช้จ่าย (บาท)"
                 />
               </div>
@@ -326,7 +362,7 @@ export default function MaintenancePage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.technician}
-                  onChange={e => setFormData({ ...formData, technician: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, technician: e.target.value })}
                   placeholder="กรอกชื่อช่าง"
                 />
               </div>
@@ -336,7 +372,7 @@ export default function MaintenancePage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.note}
-                  onChange={e => setFormData({ ...formData, note: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, note: e.target.value })}
                   placeholder="กรอกหมายเหตุ"
                 />
               </div>

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/Vehicles.module.css';
 
+/**
+ * Vehicles management page for listing, adding, editing, and deleting vehicles.
+ * @returns {JSX.Element}
+ */
 export default function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,26 +17,33 @@ export default function VehiclesPage() {
     model: '',
     status: 'active',
     location: '',
-    driver: ''
+    driver: '',
   });
 
   useEffect(() => {
     fetchVehicles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Fetch all vehicles from the API.
+   */
   const fetchVehicles = async () => {
     try {
       const response = await fetch('/api/vehicles');
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
-        setVehicles(data.vehicles);
-        setLoading(false);
+      setVehicles(data.vehicles);
+      setLoading(false);
     } catch (err) {
-        console.error(err);
-        setLoading(false);
+      console.error(err);
+      setLoading(false);
     }
   };
 
+  /**
+   * Open modal for adding a new vehicle.
+   */
   const handleAddVehicle = () => {
     setEditingVehicle(null);
     setFormData({
@@ -40,11 +51,15 @@ export default function VehiclesPage() {
       model: '',
       status: 'active',
       location: '',
-      driver: ''
+      driver: '',
     });
     setShowModal(true);
   };
 
+  /**
+   * Open modal for editing an existing vehicle.
+   * @param {object} vehicle
+   */
   const handleEditVehicle = (vehicle) => {
     setEditingVehicle(vehicle);
     setFormData({
@@ -52,61 +67,68 @@ export default function VehiclesPage() {
       model: vehicle.model || '',
       status: vehicle.status || 'active',
       location: vehicle.location || '',
-      driver: vehicle.driver || ''
+      driver: vehicle.driver || '',
     });
     setShowModal(true);
   };
 
+  /**
+   * Open confirmation modal for deleting a vehicle.
+   * @param {object} vehicle
+   */
   const handleDeleteVehicle = (vehicle) => {
     setDeletingVehicle(vehicle);
     setShowConfirmModal(true);
   };
 
+  /**
+   * Submit form for adding or editing a vehicle.
+   * @param {React.FormEvent} e
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      const url = editingVehicle 
+      const url = editingVehicle
         ? `/api/vehicles/${editingVehicle.vehicle_id}`
         : '/api/vehicles';
-      
       const method = editingVehicle ? 'PUT' : 'POST';
-      
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) throw new Error('Failed to save vehicle');
-
       setShowModal(false);
-      fetchVehicles(); // Refresh the list
+      fetchVehicles();
     } catch (error) {
       console.error('Error saving vehicle:', error);
       alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
   };
 
+  /**
+   * Confirm and delete a vehicle.
+   */
   const confirmDelete = async () => {
     try {
       const response = await fetch(`/api/vehicles/${deletingVehicle.vehicle_id}`, {
         method: 'DELETE',
       });
-
       if (!response.ok) throw new Error('Failed to delete vehicle');
-
       setShowConfirmModal(false);
       setDeletingVehicle(null);
-      fetchVehicles(); // Refresh the list
+      fetchVehicles();
     } catch (error) {
       console.error('Error deleting vehicle:', error);
       alert('เกิดข้อผิดพลาดในการลบข้อมูล');
     }
   };
 
+  /**
+   * Get CSS class for vehicle status.
+   * @param {string} status
+   * @returns {string}
+   */
   const getStatusClass = (status) => {
     const statusLower = status.toLowerCase();
     if (statusLower.includes('active') || statusLower.includes('running')) {
@@ -120,6 +142,11 @@ export default function VehiclesPage() {
     }
   };
 
+  /**
+   * Format date string to Thai locale.
+   * @param {string} dateString
+   * @returns {string}
+   */
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('th-TH', {
@@ -127,7 +154,7 @@ export default function VehiclesPage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -136,12 +163,10 @@ export default function VehiclesPage() {
       <a href="/dashboard" className={styles.backButton}>
         ← กลับไปหน้า Dashboard
       </a>
-      
       <div className={styles.header}>
         <h1 className={styles.title}>🚗 ยานพาหนะ</h1>
         <p className={styles.subtitle}>จัดการและติดตามสถานะยานพาหนะทั้งหมด</p>
       </div>
-
       {loading ? (
         <div className={styles.loadingContainer}>
           <div className={styles.loadingSpinner}></div>
@@ -151,48 +176,40 @@ export default function VehiclesPage() {
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>🚗</div>
           <div className={styles.emptyText}>ไม่พบข้อมูลยานพาหนะ</div>
-          <div className={styles.emptySubtext}>ลองรีเฟรชหน้าหรือตรวจสอบการเชื่อมต่อ</div>
+          <div className={styles.emptySubtext}>ลองรีเฟรชหน้าหรือทำการสอบถามการเชื่อมต่อ</div>
         </div>
       ) : (
         <div className={styles.vehiclesGrid}>
-          {vehicles.map(vehicle => (
+          {vehicles.map((vehicle) => (
             <div key={vehicle.vehicle_id} className={styles.vehicleCard}>
               <div className={styles.vehicleHeader}>
                 <h3 className={styles.vehicleName}>{vehicle.name}</h3>
                 <span className={styles.vehicleId}>#{vehicle.vehicle_id}</span>
               </div>
-              
               <div className={styles.vehicleInfo}>
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>รุ่น:</span>
                   <span className={styles.infoValue}>{vehicle.model}</span>
                 </div>
-                
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>สถานะ:</span>
                   <span className={`${styles.status} ${getStatusClass(vehicle.status)}`}>
                     {vehicle.status}
                   </span>
                 </div>
-                
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>ตำแหน่ง:</span>
                   <span className={styles.infoValue}>{vehicle.location || 'ไม่ระบุ'}</span>
                 </div>
-                
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>คนขับ:</span>
                   <span className={styles.infoValue}>{vehicle.driver || 'ไม่ระบุ'}</span>
                 </div>
-                
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>อัปเดตล่าสุด:</span>
-                  <span className={`${styles.infoValue} ${styles.timestamp}`}>
-                    {formatDate(vehicle.updated_at)}
-                  </span>
+                  <span className={`${styles.infoValue} ${styles.timestamp}`}>{formatDate(vehicle.updated_at)}</span>
                 </div>
               </div>
-
               <div className={styles.actionButtons}>
                 <button
                   onClick={() => handleEditVehicle(vehicle)}
@@ -211,12 +228,10 @@ export default function VehiclesPage() {
           ))}
         </div>
       )}
-
       {/* Floating Add Button */}
       <button onClick={handleAddVehicle} className={styles.addVehicleButton}>
         ➕ เพิ่มยานพาหนะ
       </button>
-
       {/* Add/Edit Modal */}
       {showModal && (
         <div className={styles.modal}>
@@ -232,7 +247,6 @@ export default function VehiclesPage() {
                 ×
               </button>
             </div>
-
             <form onSubmit={handleSubmit}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>ชื่อยานพาหนะ *</label>
@@ -240,30 +254,28 @@ export default function VehiclesPage() {
                   type="text"
                   className={styles.formInput}
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   placeholder="กรอกชื่อยานพาหนะ"
                 />
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>รุ่น *</label>
                 <input
                   type="text"
                   className={styles.formInput}
                   value={formData.model}
-                  onChange={(e) => setFormData({...formData, model: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                   required
                   placeholder="กรอกรุ่นยานพาหนะ"
                 />
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>สถานะ</label>
                 <select
                   className={styles.formSelect}
                   value={formData.status}
-                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
                   <option value="active">ใช้งานได้</option>
                   <option value="inactive">ไม่ใช้งาน</option>
@@ -271,29 +283,26 @@ export default function VehiclesPage() {
                   <option value="available">พร้อมใช้งาน</option>
                 </select>
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>ตำแหน่ง</label>
                 <input
                   type="text"
                   className={styles.formInput}
                   value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="กรอกตำแหน่งปัจจุบัน"
                 />
               </div>
-
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>คนขับ</label>
                 <input
                   type="text"
                   className={styles.formInput}
                   value={formData.driver}
-                  onChange={(e) => setFormData({...formData, driver: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, driver: e.target.value })}
                   placeholder="กรอกชื่อคนขับ"
                 />
               </div>
-
               <div className={styles.modalActions}>
                 <button
                   type="button"
@@ -303,23 +312,21 @@ export default function VehiclesPage() {
                   ยกเลิก
                 </button>
                 <button type="submit" className={styles.saveButton}>
-                  {editingVehicle ? 'บันทึกการแก้ไข' : 'เพิ่มยานพาหนะ'}
+                  บันทึก
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
-
-      {/* Delete Confirmation Modal */}
+      {/* Confirm Delete Modal */}
       {showConfirmModal && (
-        <div className={styles.confirmModal}>
+        <div className={styles.modal}>
           <div className={styles.confirmContent}>
-            <h3 className={styles.confirmTitle}>ยืนยันการลบ</h3>
-            <p className={styles.confirmMessage}>
-              คุณต้องการลบยานพาหนะ "{deletingVehicle?.name}" ใช่หรือไม่? 
-              การดำเนินการนี้ไม่สามารถยกเลิกได้
-            </p>
+            <div className={styles.confirmTitle}>ยืนยันการลบ</div>
+            <div className={styles.confirmMessage}>
+              คุณต้องการลบยานพาหนะนี้หรือไม่?
+            </div>
             <div className={styles.confirmActions}>
               <button
                 onClick={() => setShowConfirmModal(false)}
@@ -331,7 +338,7 @@ export default function VehiclesPage() {
                 onClick={confirmDelete}
                 className={styles.confirmDeleteButton}
               >
-                ลบยานพาหนะ
+                ลบ
               </button>
             </div>
           </div>

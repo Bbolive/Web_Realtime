@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 
+/**
+ * Admin page for managing user access requests.
+ * @returns {JSX.Element}
+ */
 export default function UserRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,8 +12,12 @@ export default function UserRequestsPage() {
 
   useEffect(() => {
     fetchRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Fetch all user requests from the API.
+   */
   const fetchRequests = async () => {
     setLoading(true);
     const res = await fetch('/api/user-requests');
@@ -18,6 +26,10 @@ export default function UserRequestsPage() {
     setLoading(false);
   };
 
+  /**
+   * Approve a user request by ID.
+   * @param {number} id
+   */
   const handleApprove = async (id) => {
     setActionLoading(id);
     setMessage('');
@@ -28,6 +40,10 @@ export default function UserRequestsPage() {
     setActionLoading(null);
   };
 
+  /**
+   * Reject a user request by ID.
+   * @param {number} id
+   */
   const handleReject = async (id) => {
     setActionLoading(id);
     setMessage('');
@@ -216,7 +232,7 @@ export default function UserRequestsPage() {
                     fontWeight: 700, 
                     fontSize: '1rem', 
                     cursor: 'pointer', 
-                    boxShadow: '0 2px 8px #f5656533', 
+                    boxShadow: '0 2px 8px #e53e3e33', 
                     transition: 'all 0.2s', 
                     opacity: actionLoading === req.id ? 0.7 : 1,
                     '@media (max-width: 768px)': { 
